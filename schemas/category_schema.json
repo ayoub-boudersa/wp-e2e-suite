@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "required": ["id", "name", "slug", "count"],
+    "properties": {
+        "id": {"type": "integer"},
+        "name": {"type": "string"},
+        "slug": {"type": "string"},
+        "count": {"type": "integer"},
+        "description": {"type": "string"}
+    }
+}

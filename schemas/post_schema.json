@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "required": ["id", "title", "content", "status", "author", "date"],
+    "properties": {
+        "id": {"type": "integer"},
+        "title": {
+            "type": "object",
+            "required": ["rendered"],
+            "properties": {
+                "rendered": {"type": "string"}
+            }
+        },
+        "content": {
+            "type": "object",
+            "required": ["rendered"],
+            "properties": {
+                "rendered": {"type": "string"}
+            }
+        },
+        "status": {
+            "type": "string",
+            "enum": ["publish", "draft", "pending", "private", "trash"]
+        },
+        "author": {"type": "integer"},
+        "date": {"type": "string"},
+        "slug": {"type": "string"},
+        "link": {"type": "string"}
+    }
+}
