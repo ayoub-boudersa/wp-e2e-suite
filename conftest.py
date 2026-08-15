@@ -34,7 +34,18 @@ def pytest_runtest_makereport(item, call):
         return
 
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
-    screenshot_path = SCREENSHOT_DIR / f"{item.name}.png"
+
+    import re
+
+    def _safe_filename(name: str) -> str:
+        """Strip characters that break filenames on Windows / GitHub artifact
+        uploads (", :, <, >, |, *, ?, \\, /) — test names built from
+        parametrize ids can contain arbitrary strings, including ones
+        deliberately malicious (e.g. SQL-injection payloads)."""
+        return re.sub(r'[<>:"/\\|?*]', "_", name)[:150]
+
+    screenshot_path = SCREENSHOT_DIR / f"{_safe_filename(item.name)}.png"
+    
     try:
         page.screenshot(path=str(screenshot_path))
     except Exception:
