@@ -12,6 +12,39 @@ APP_PASSWORD = os.getenv("WP_APP_PASSWORD")
 import pytest
 from playwright.sync_api import sync_playwright
 
+import base64
+from pathlib import Path
+
+SCREENSHOT_DIR = Path("reports/screenshots")
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when != "call" or not report.failed:
+        return
+
+    page = item.funcargs.get("page") or item.funcargs.get("authenticated_page")
+    if page is None:
+        return  # API test, nothing to screenshot
+
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    if pytest_html is None:
+        return
+
+    SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+    screenshot_path = SCREENSHOT_DIR / f"{item.name}.png"
+    try:
+        page.screenshot(path=str(screenshot_path))
+    except Exception:
+        return
+
+    encoded = base64.b64encode(screenshot_path.read_bytes()).decode()
+    extra = getattr(report, "extra", [])
+    extra.append(pytest_html.extras.image(encoded, mime_type="image/png"))
+    report.extra = extra
+
 @pytest.fixture(scope="session")
 def browser_instance():
     with sync_playwright() as p:
