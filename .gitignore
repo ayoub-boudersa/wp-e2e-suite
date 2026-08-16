@@ -5,3 +5,5 @@ reports/
 screenshots/
 traces/
 .pytest_cache/
+venv/
+report.json

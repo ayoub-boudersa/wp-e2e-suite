@@ -5,3 +5,4 @@ pytest-html
 requests
 python-dotenv
 jsonschema
+pytest-json-ctrf
